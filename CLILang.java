@@ -61,7 +61,7 @@ public class CLILang {
 			Language lang = new Language(langName, words);
 
 			try {
-				PrintWriter out = new PrintWriter("dict.txt");
+				PrintWriter out = new PrintWriter(langName + ".txt");
 				out.println("language:" + lang.getLang());
 				ArrayList<String[]> placeHolder = lang.getWords();
 				for (String[] word : placeHolder) {
@@ -75,7 +75,7 @@ public class CLILang {
 
 
 			System.out.println("Looks like we're ready to go! We just made a file");
-			System.out.println("for you called 'dict.txt' that has your language and");
+			System.out.println("for you called '" + langName + ".txt' that has your language and");
 			System.out.println("the words you're learning!");
 
 			String choice = "";
