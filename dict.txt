@@ -1,0 +1,5 @@
+language:Spanish
+amar:to love
+comer:to eat
+andar:to walk
+poner:to put
