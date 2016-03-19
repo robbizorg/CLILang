@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.Scanner;
 import java.util.ArrayList;
 
@@ -32,8 +33,58 @@ public class CLILang {
 			}
 
 		} catch (Exception e) {
-			//Scanner in = new Scanner(System.in);
-			System.out.println("Please Provide a File");
+			System.out.println("Welcome to CLILang! You didn't provide a file,");
+			System.out.println("here are some preliminary questions to get you set up.");
+			System.out.println("");
+
+			System.out.println("What Language will you be working with? ");
+			System.out.print("=> ");
+			Scanner in = new Scanner(System.in);
+			String langName = in.nextLine();
+			System.out.println("");
+
+			System.out.println("Awesome! I love " + langName + ". Add some words to your");
+			System.out.println("language in the format 'word:definition'. Type 'STOP'");
+			System.out.println("when you're ready to stop typing.");
+
+			String wordPair = "";
+			ArrayList<String[]> words = new ArrayList<String[]>();
+			while (true) {
+				wordPair = in.nextLine();
+
+				if (wordPair.equals("STOP"))
+					break;
+
+				words.add(wordPair.split(":"));
+			}
+
+			Language lang = new Language(langName, words);
+
+			try {
+				PrintWriter out = new PrintWriter("dict.txt");
+				out.println("language:" + lang.getLang());
+				ArrayList<String[]> placeHolder = lang.getWords();
+				for (String[] word : placeHolder) {
+					out.println(word[0] + ":" + word[1]);
+					out.flush();
+				}
+
+			} catch (Exception ex) {
+				System.out.println("File Not Found");
+			}
+
+
+			System.out.println("Looks like we're ready to go! We just made a file");
+			System.out.println("for you called 'dict.txt' that has your language and");
+			System.out.println("the words you're learning!");
+
+			String choice = "";
+			while (!choice.equals("exit")) {
+				System.out.println("What would you like to do?");
+				choice = in.nextLine();	
+				parseChoice(choice, lang, in);			
+			}
+			
 		}
 	}
 
