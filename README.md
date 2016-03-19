@@ -13,11 +13,11 @@ For initial users with no prior use, simply run 'java CLILang' and the program
 will run. For more advanced users, it is possible to provide the program with 
 a list of words and their meanings in a separate text file. Here is an example:
 
-dictionary.txt:
->	Language:Spanish 
->	comer:to eat
->	amar:to love
->	correr:to run
+dict.txt:
+>1.	Language:Spanish 
+>2.	comer:to eat
+>3.	amar:to love
+>4.	correr:to run
 Then run the command 'java CLILang dictionary.txt' and you'll be tested on
 the words there!
 
