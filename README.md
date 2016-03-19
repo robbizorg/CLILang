@@ -18,6 +18,7 @@ dict.txt:
 >2.	comer:to eat
 >3.	amar:to love
 >4.	correr:to run
+
 Then run the command 'java CLILang dictionary.txt' and you'll be tested on
 the words there!
 
