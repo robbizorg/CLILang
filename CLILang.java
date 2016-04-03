@@ -3,6 +3,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class CLILang {
 	public static final void main(String[] args) {
@@ -11,6 +12,7 @@ public class CLILang {
 			ArrayList<String[]> words = new ArrayList<String[]>();
 
 			Scanner in = new Scanner(new File(args[0]));
+			System.out.println("===CLILANG===");
 			if (!in.hasNextLine()) {
 				System.out.println("Please rerun with proper dictionary format described in README");
 			}
@@ -29,10 +31,16 @@ public class CLILang {
 				System.out.println("What would you like to do?");
 				Scanner input = new Scanner(System.in);
 				choice = input.nextLine();	
-				parseChoice(choice, lang, input);			
+				lang = parseChoice(choice, lang, input);
+
+				// To Update for Difficulty, Reload the language
+				if (choice.equals("test")) {
+					lang.sortWords();
+				}			
 			}
 
-		} catch (Exception e) {
+		} catch (FileNotFoundException | ArrayIndexOutOfBoundsException e) {
+			System.out.println("===CLILANG===");
 			System.out.println("Welcome to CLILang! You didn't provide a file,");
 			System.out.println("here are some preliminary questions to get you set up.");
 			System.out.println("");
@@ -62,21 +70,28 @@ public class CLILang {
 
 			try {
 				PrintWriter out = new PrintWriter(langName + ".txt");
+
 				out.println("language:" + lang.getLang());
+
 				ArrayList<String[]> placeHolder = lang.getWords();
+
 				for (String[] word : placeHolder) {
-					out.println(word[0] + ":" + word[1]);
+					out.println(word[0] + ":" + word[1] + ":0");
 					out.flush();
 				}
 
 			} catch (Exception ex) {
-				System.out.println("File Not Found");
+				System.out.println(ex);
 			}
 
-
+			System.out.println("");
 			System.out.println("Looks like we're ready to go! We just made a file");
 			System.out.println("for you called '" + langName + ".txt' that has your language and");
-			System.out.println("the words you're learning!");
+			System.out.println("the words you're learning, along with a number describing their ");
+			System.out.println("difficulty. Right now, they're all labeled with a zero, meaning");
+			System.out.println("that they haven't been practiced. Type 'test' to try it out! Type 'help'" );
+			System.out.println("to get additional info.");
+			System.out.println("");
 
 			String choice = "";
 			while (!choice.equals("exit")) {
@@ -92,11 +107,11 @@ public class CLILang {
 		return line.split(":");
 	}
 
-	public static void parseChoice(String choice, Language lang, Scanner scan) {
+	public static Language parseChoice(String choice, Language lang, Scanner scan) {
 		if (choice.equals("exit")) {
-			return;
+			return lang;
 		} else if (choice.equals("test")) {
-			test(lang, scan);
+			lang = test(lang, scan);
 			System.out.println("");
 		} else if (choice.equals("help")) {
 			help();
@@ -105,9 +120,11 @@ public class CLILang {
 			System.out.println("Sorry, I didn't catch that. Try typing 'help'");
 			System.out.println("if you're stuck.");
 		}
+
+		return lang;
 	}
 
-	public static void test(Language lang, Scanner scan) {
+	public static Language test(Language lang, Scanner scan) {
 
 		for (String[] pair : lang.getWords()) {
 			String answer = "";
@@ -126,10 +143,45 @@ public class CLILang {
 				tries++;
 			}
 
+			// Changes the Difficulty of Word
+			lang.setDifficulty(pair[0], tries);
+
 			System.out.println(" ");
 		}
 
 		System.out.println("Congratulations! You got them all!");
+
+		try {
+			PrintWriter changes = new PrintWriter(lang.getLang() + ".txt");
+
+			changes.println("language:" + lang.getLang());
+
+			ArrayList<String[]> placeHolder = lang.getWords();
+			LinkedList<String> sortedWords = new LinkedList<String>();
+
+			for (String[] word : placeHolder) {
+				String wordValue = word[0] + ":" + word[1] + ":" + lang.getDifficulty(word[0]);
+
+				// If Statement to Determine how to handle wordValue
+				if (sortedWords.size() == 0) {
+					sortedWords.add(wordValue);
+				} else if (lang.getDifficulty(word[0]) < lang.getDifficulty(sortedWords.peek().split(":")[0])) {
+					sortedWords.add(wordValue);
+				} else {
+					sortedWords.push(wordValue);
+				}
+			}
+
+			for (String word : sortedWords) {
+				changes.println(word);
+				changes.flush();
+			}
+
+		} catch (Exception ex) {
+			System.out.println(ex);
+		}
+
+		return lang;
 	}
 
 	public static void help() {
